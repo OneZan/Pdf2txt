@@ -26,7 +26,6 @@ PDF2Text is a FastAPI-based web application for extracting text from PDF files. 
 │   └── index.html        # Frontend HTML interface (file upload and result display)
 ├── pdf_files/            # Directory for incoming PDF files (input)
 ├── processed/            # Directory for processed files (.txt outputs, etc.)
-├── pyproject.toml        # Poetry project configuration
 ├── README.md             # Project documentation
 ├── requirements.txt      # Python dependencies
 └── .gitignore            # Git ignore rules
