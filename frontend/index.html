@@ -1,0 +1,44 @@
+<!-- frontend/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload a PDF</title>
+</head>
+<body>
+  <h2>Upload a PDF File</h2>
+  <input type="file" id="pdfFile" accept=".pdf">
+  <button onclick="uploadPDF()">Upload & Extract</button>
+
+  <h3>Result</h3>
+  <div id="result"></div>
+
+  <script>
+    async function uploadPDF() {
+      const fileInput = document.getElementById("pdfFile");
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert("Please select a PDF file.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("http://127.0.0.1:8000/extract-pdf/", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = `
+        <strong>Processed:</strong> ${data.filename}<br>
+        <strong>Saved to:</strong> ${data.output_txt}<br>
+        <strong>Preview:</strong><pre>${data.text_preview}</pre>
+      `;
+    }
+  </script>
+</body>
+</html>
