@@ -39,7 +39,6 @@ PDF2Text is a FastAPI-based web application for extracting text from PDF files. 
 ### Prerequisites
 
 - Python 3.12 or higher
-- [Poetry](https://python-poetry.org/docs/#installation)
 - [Poppler](https://github.com/Belval/pdf2image#how-to-install) (required for `pdf2image`)
 
 ### Installation
@@ -50,16 +49,19 @@ PDF2Text is a FastAPI-based web application for extracting text from PDF files. 
    cd pdf2text
    ```
 
-2. Install dependencies using Poetry:
+2. Create and activate a virtual environment:
    ```bash
-   poetry install
+   python3 -m venv venv
+   source venv/bin/activate          # On Windows use: venv\Scripts\activate
    ```
 
-3. Install Poppler (required for `pdf2image`):
-   - On Ubuntu/Debian:
-     ```bash
-     sudo apt-get install poppler-utils
-     ```
+3. Install dependencies from `requirements.txt`:
+   ```bash
+   pip install --upgrade pip
+   pip install -r requirements.txt
+   ```
+
+4. (If Needed) Install Poppler (required for `pdf2image`):
    - On macOS:
      ```bash
      brew install poppler
@@ -69,13 +71,17 @@ PDF2Text is a FastAPI-based web application for extracting text from PDF files. 
 
 1. Start the FastAPI server:
    ```bash
-   poetry run uvicorn backend.api:app --reload
+   uvicorn backend.api:app --reload
    ```
 
 2. Open the web interface:
    - Navigate to `http://127.0.0.1:8000/` in your browser.
 
-3. Upload a PDF file and view the extracted text.
+3. Browse for a PDF file.
+
+4. Click on Upload & Extract. A result will show up when the document is processed.
+
+5. Access the full .txt file at http://localhost:8000/processed/filename.txt 
 
 ---
 
@@ -116,12 +122,20 @@ curl -F "file=@path/to/yourfile.pdf" http://127.0.0.1:8000/extract-pdf/
 
 ---
 
+# Cloud Architecture
+
+You can deploy PDF2Text on a cloud service to enable remote PDF processing via web or API. The following diagram demonstrates a typical deployment:
+
+![Cloud Architecture Diagram](docs/diag.png)
+---
 ## Notes
 
 - **OCR Performance:** OCR may be slow for large or image-heavy PDFs.
 - **Permissions:** Ensure the application has write access to `/processed/` and `/pdf_files/`.
 
 ---
+
+-- 
 
 ## License
 
