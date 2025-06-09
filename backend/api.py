@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File,HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse,FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -24,6 +24,11 @@ def serve_frontend():
 
 @app.post("/extract-pdf/")
 async def extract_pdf(file: UploadFile = File(...)):
+    if not file.filename.lower().endswith('.pdf'):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid file type. Only PDF files are accepted."
+        )
     contents = await file.read()
     os.makedirs("processed", exist_ok=True)
     app.mount("/processed", StaticFiles(directory="processed"), name="processed")
