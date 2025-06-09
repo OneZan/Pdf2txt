@@ -2,3 +2,4 @@
 *pyc
 dev/
 *.lock
+*.toml

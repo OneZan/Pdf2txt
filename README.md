@@ -1,6 +1,17 @@
 # PDF2Text
 
-A FastAPI-based web application for extracting text from PDF files, with automatic OCR fallback for scanned documents. The project features a REST API for PDF uploads, a simple frontend for easy interaction, and organized input/output directories. Dependencies are managed with [Poetry](https://python-poetry.org/).
+PDF2Text is a FastAPI-based web application for extracting text from PDF files. It features automatic OCR fallback for scanned documents, a REST API for PDF uploads, and a simple web interface for easy interaction. The project is designed to handle both text-based and image-based PDFs efficiently.
+
+---
+
+## Features
+
+- **Web Interface:** Upload PDFs via a browser and view extracted results instantly.
+- **REST API:** Upload PDFs programmatically using the `/extract-pdf/` endpoint.
+- **Text Extraction:** Uses `pdfminer.six` for text-based PDFs.
+- **OCR Fallback:** Automatically uses OCR (`easyocr` + `pdf2image`) for scanned/image-based PDFs.
+- **Organized Storage:** Input PDFs are stored in `/pdf_files/`, and processed text files are saved in `/processed/`.
+- **Text Preview:** Displays a preview of the extracted text in the web interface.
 
 ---
 
@@ -11,77 +22,79 @@ A FastAPI-based web application for extracting text from PDF files, with automat
 ├── backend/
 │   ├── api.py            # FastAPI app (API endpoints, frontend mounting)
 │   ├── process_pdf.py    # PDF processing and text extraction logic
-│   └── ...
 ├── frontend/
 │   └── index.html        # Frontend HTML interface (file upload and result display)
 ├── pdf_files/            # Directory for incoming PDF files (input)
 ├── processed/            # Directory for processed files (.txt outputs, etc.)
 ├── pyproject.toml        # Poetry project configuration
-├── README.md
-├── .gitignore
-...
+├── README.md             # Project documentation
+├── requirements.txt      # Python dependencies
+└── .gitignore            # Git ignore rules
 ```
-
----
-
-## Features
-
-- **Web Interface:** Upload PDFs from your browser and see extracted results instantly.
-- **PDF Upload API:** Upload PDFs via a REST API endpoint.
-- **Text Extraction:** Uses `pdfminer.six` for extracting text from PDFs.
-- **OCR Fallback:** Falls back to OCR (`easyocr` + `pdf2image`) if standard extraction fails.
-- **Organized Storage:** Input PDFs in `/pdf_files/`, processed text in `/processed/`.
-- **Text Preview and Download Info:** See a preview of extracted text and the path to the saved file.
 
 ---
 
 ## Getting Started
 
-### 1. Install [Poetry](https://python-poetry.org/docs/#installation)
+### Prerequisites
 
-```bash
-curl -sSL https://install.python-poetry.org | python3 -
-```
+- Python 3.12 or higher
+- [Poetry](https://python-poetry.org/docs/#installation)
+- [Poppler](https://github.com/Belval/pdf2image#how-to-install) (required for `pdf2image`)
 
-### 2. Install Dependencies
+### Installation
 
-From the project root:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/pdf2text.git
+   cd pdf2text
+   ```
 
-```bash
-poetry install
-```
+2. Install dependencies using Poetry:
+   ```bash
+   poetry install
+   ```
 
-### 3. Run the Backend API
+3. Install Poppler (required for `pdf2image`):
+   - On Ubuntu/Debian:
+     ```bash
+     sudo apt-get install poppler-utils
+     ```
+   - On macOS:
+     ```bash
+     brew install poppler
+     ```
 
-```bash
-poetry run uvicorn backend.api:app --reload
-```
+### Running the Application
+
+1. Start the FastAPI server:
+   ```bash
+   poetry run uvicorn backend.api:app --reload
+   ```
+
+2. Open the web interface:
+   - Navigate to `http://127.0.0.1:8000/` in your browser.
+
+3. Upload a PDF file and view the extracted text.
 
 ---
 
-## Using the Web Interface
+## API Usage
 
-1. Open `frontend/index.html` in your web browser.
-2. Click **Choose File** and select a PDF.
-3. Click **Upload & Extract**.
-4. The result will show:
-    - **Processed:** Filename of your PDF
-    - **Saved to:** Path where the extracted text was saved (e.g., `processed/yourfile.txt`)
-    - **Preview:** The first portion of the extracted text
+### Endpoint
 
----
+- **URL:** `POST /extract-pdf/`
+- **Form Field:** `file` (the PDF file)
 
-## API Usage (for developers)
+### Example Request
 
-- **Endpoint:** `POST /extract-pdf/`
-- **Form field:** `file` (the PDF file)
-
-**Example using `curl`:**
+Using `curl`:
 ```bash
-curl -F "file=@path/to/yourfile.pdf" http://localhost:8000/extract-pdf/
+curl -F "file=@path/to/yourfile.pdf" http://127.0.0.1:8000/extract-pdf/
 ```
 
-**Response Example:**
+### Example Response
+
 ```json
 {
   "filename": "yourfile.pdf",
@@ -93,31 +106,30 @@ curl -F "file=@path/to/yourfile.pdf" http://localhost:8000/extract-pdf/
 
 ---
 
-## How it Works
+## How It Works
 
-1. User selects a PDF through the browser or sends it to the API.
-2. The backend saves the file to `/pdf_files/` and tries to extract text with `pdfminer.six`.
-3. If extraction fails, it uses OCR (`easyocr`/`pdf2image`).
-4. Extracted text is saved to `/processed/<filename>.txt` and the result is shown in the browser (filename, output path, and preview).
+1. **PDF Upload:** The user uploads a PDF via the web interface or API.
+2. **Text Extraction:** The backend attempts to extract text using `pdfminer.six`.
+3. **OCR Fallback:** If `pdfminer.six` fails, OCR is performed using `easyocr` and `pdf2image`.
+4. **Result Storage:** Extracted text is saved in `/processed/` as a `.txt` file.
+5. **Result Display:** The web interface shows the filename, output path, and a preview of the extracted text.
 
 ---
 
 ## Notes
 
-- **Poppler** is required for `pdf2image`.  
-  See [pdf2image installation instructions](https://github.com/Belval/pdf2image#how-to-install).
-- **Large PDFs:** OCR may be slow for big or image-heavy files.
-- **Permissions:** Ensure the app has write access to `/processed/` and `/pdf_files/`.
+- **OCR Performance:** OCR may be slow for large or image-heavy PDFs.
+- **Permissions:** Ensure the application has write access to `/processed/` and `/pdf_files/`.
 
 ---
 
 ## License
 
-MIT License
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
-## Credits
+## Acknowledgments
 
 - [FastAPI](https://fastapi.tiangolo.com/)
 - [pdfminer.six](https://github.com/pdfminer/pdfminer.six)
